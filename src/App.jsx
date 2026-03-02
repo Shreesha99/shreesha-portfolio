@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Lenis from "@studio-freight/lenis";
-import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  useSpring,
-  animate,
-} from "framer-motion";
+import { motion, useMotionValue, useSpring, animate } from "framer-motion";
 import "./styles.css";
 import {
   SiReact,
@@ -14,10 +8,8 @@ import {
   SiAngular,
   SiDotnet,
   SiMysql,
-  SiUpcloud,
-  SiFila,
 } from "react-icons/si";
-import { Download, DownloadCloud } from "lucide";
+import gsap from "gsap";
 import { DownloadCloudIcon } from "lucide-react";
 
 /* ─── SVG Distortion Filter ─── */
@@ -95,6 +87,15 @@ function Preloader({ onDone }) {
 function WavyName() {
   const animFrameRef = useRef(null);
   const phaseRef = useRef(0);
+  const [interactive, setInteractive] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInteractive(true);
+    }, 1400); // after drop animation finishes
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const startWave = (el) => {
     const displace = document.getElementById("displace");
@@ -155,8 +156,8 @@ function WavyName() {
         <span
           key={i}
           className="hero-letter"
-          onMouseEnter={(e) => startWave(e.currentTarget)}
-          onMouseLeave={(e) => stopWave(e.currentTarget)}
+          onMouseEnter={(e) => interactive && startWave(e.currentTarget)}
+          onMouseLeave={(e) => interactive && stopWave(e.currentTarget)}
         >
           {letter}
         </span>
@@ -284,7 +285,11 @@ function Navbar({ visible }) {
 }
 
 function AnimatedLogo() {
-  return <div className="logo-text">cvs</div>;
+  return (
+    <div className="logo-text">
+      <a href="/">cvs</a>
+    </div>
+  );
 }
 
 /* ─── Hero Section ─── */
@@ -302,16 +307,17 @@ function Hero({ visible }) {
           <motion.div
             className="hero-subtitle"
             initial={{ y: 20, opacity: 0 }}
-            animate={visible ? { y: 0, opacity: 1 } : {}}
-            transition={{ delay: 0.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            animate={visible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             Web & App Design + Dev
           </motion.div>
+
           <motion.p
             className="hero-bio"
             initial={{ y: 20, opacity: 0 }}
-            animate={visible ? { y: 0, opacity: 1 } : {}}
-            transition={{ delay: 0.45, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            animate={visible ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             I don’t see creativity as something you switch on, it’s something
             you live with. It’s the instinct to question, to experiment, to
@@ -325,13 +331,15 @@ function Hero({ visible }) {
 
         {/* The massive name — clips between white and black */}
         <div className="hero-name-container">
-          <motion.div
-            initial={{ y: 60, opacity: 0 }}
-            animate={visible ? { y: 0, opacity: 1 } : {}}
-            transition={{ delay: 0.15, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <WavyName />
-          </motion.div>
+          {visible && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <WavyName />
+            </motion.div>
+          )}
         </div>
       </div>
 
@@ -409,50 +417,99 @@ function Keyboard3D() {
   );
 }
 
-function Key({ letter, icon }) {
-  const [hovered, setHovered] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+function NamePreloader({ onDone }) {
+  const [expanded, setExpanded] = useState(false);
+  const [exit, setExit] = useState(false);
 
   useEffect(() => {
-    const check = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const t1 = setTimeout(() => setExpanded(true), 900);
+    const t2 = setTimeout(() => setExit(true), 2400);
+    const t3 = setTimeout(() => onDone(), 3300);
 
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, []);
 
-  const active = isMobile && icon ? true : hovered;
+  return (
+    <motion.div
+      className="name-preloader"
+      initial={{ x: 0 }}
+      animate={exit ? { x: "100%" } : { x: 0 }}
+      transition={{
+        duration: 1,
+        ease: [0.83, 0, 0.17, 1],
+      }}
+    >
+      <div className="name-wrap">
+        <motion.div layout className="name-row">
+          {/* FIRST NAME */}
+          <div className="name-block">
+            <motion.span layout className="initial">
+              s
+            </motion.span>
+            {expanded && (
+              <motion.span
+                layout
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="expand"
+              >
+                hreesha
+              </motion.span>
+            )}
+          </div>
+
+          {/* LAST NAME */}
+          <div className="name-block">
+            <motion.span layout className="initial">
+              v
+            </motion.span>
+            {expanded && (
+              <motion.span
+                layout
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="expand"
+              >
+                enkatram
+              </motion.span>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+function Key({ letter, icon }) {
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
       className="key"
-      onHoverStart={() => !isMobile && setHovered(true)}
-      onHoverEnd={() => !isMobile && setHovered(false)}
-      whileHover={
-        !isMobile
-          ? {
-              y: -10,
-              rotateX: 22,
-              rotateY: 8,
-            }
-          : {}
-      }
-      whileTap={
-        !isMobile
-          ? {
-              y: 2,
-              rotateX: 12,
-            }
-          : {}
-      }
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={{
+        y: -12,
+        rotateX: 22,
+        rotateY: 8,
+      }}
+      whileTap={{
+        y: 2,
+        rotateX: 12,
+      }}
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
     >
       <div className="key-cap">
         <motion.span
           className="key-letter"
-          animate={{ opacity: active ? 0 : 1 }}
+          animate={{ opacity: hovered && icon ? 0 : 1 }}
+          transition={{ duration: 0.2 }}
         >
           {letter}
         </motion.span>
@@ -461,8 +518,8 @@ function Key({ letter, icon }) {
           <motion.div
             className="key-icon"
             animate={{
-              opacity: active ? 1 : 0,
-              scale: active ? 1 : 0.7,
+              opacity: hovered ? 1 : 0,
+              scale: hovered ? 1 : 0.7,
             }}
             transition={{ duration: 0.25 }}
           >
@@ -842,17 +899,7 @@ export default function App() {
       <DistortFilter />
       <Cursor />
 
-      <AnimatePresence>
-        {!loaded && (
-          <motion.div
-            key="pre"
-            exit={{ opacity: 0, scale: 1.04 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Preloader onDone={() => setLoaded(true)} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {!loaded && <NamePreloader onDone={() => setLoaded(true)} />}
 
       <div className="page">
         <Navbar visible={loaded} />

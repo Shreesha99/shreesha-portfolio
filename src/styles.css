@@ -319,6 +319,7 @@ button {
   overflow: visible;
   margin-top: -10px;
   line-height: 0.85;
+  transform: translateZ(0);
 }
 
 .hero-name {
@@ -332,7 +333,8 @@ button {
   padding: 0 16px;
   display: block;
   user-select: none;
-  will-change: filter;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ── Black Lower Half ── */
@@ -925,4 +927,64 @@ button {
 .resume-download:hover {
   background: black;
   color: white;
+}
+
+/* ── Preloader ── */
+
+.name-preloader {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  color: #fff;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 6vw;
+}
+
+.name-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.name-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(20px, 3vw, 60px);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(48px, 9vw, 140px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.name-block {
+  display: flex;
+  align-items: baseline;
+}
+
+.initial {
+  flex-shrink: 0;
+}
+
+.expand {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .name-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-size: clamp(42px, 13vw, 72px);
+  }
+
+  .name-block {
+    justify-content: center;
+  }
 }
