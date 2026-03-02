@@ -652,15 +652,16 @@ function ResumeSection() {
   const [inView, setInView] = useState(false);
   const [pageWidth, setPageWidth] = useState(800);
   const [numPages, setNumPages] = useState(null);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const updateWidth = () => {
-      setPageWidth(Math.min(window.innerWidth * 0.75, 850));
+      setPageWidth(Math.min(window.innerWidth * 0.75, 850) * scale);
     };
     updateWidth();
     window.addEventListener("resize", updateWidth);
     return () => window.removeEventListener("resize", updateWidth);
-  }, []);
+  }, [scale]);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -708,7 +709,6 @@ function ResumeSection() {
           >
             Professional Experience & Technical Background
           </motion.h2>
-
           <motion.div
             className="resume-preview"
             data-lenis-prevent
