@@ -83,11 +83,17 @@ function FlipCircle() {
         }}
       >
         <div className="flip-face flip-front">
-          <img src="/photo.png" alt="front" />
+          <img
+            src="https://storage.googleapis.com/shreesha/photo.png"
+            alt="front"
+          />
         </div>
 
         <div className="flip-face flip-back">
-          <img src="/avatar.png" alt="back" />
+          <img
+            src="https://storage.googleapis.com/shreesha/avatar.png"
+            alt="back"
+          />
         </div>
       </motion.div>
     </div>
@@ -402,7 +408,7 @@ const projects = [
     tag: "Frontend Engineering",
     year: "2024",
     desc: "Built high fidelity recreations of modern platforms to master UI systems and scalable component systems.",
-    image: "/projects/clone.png",
+    image: "https://storage.googleapis.com/shreesha/projects/clone.png",
     link: "https://github.com/Shreesha99",
   },
   {
@@ -411,7 +417,7 @@ const projects = [
     tag: "Design + Dev",
     year: "2024",
     desc: "Interactive portfolio built with advanced motion and UI micro interactions.",
-    image: "/projects/port.png",
+    image: "https://storage.googleapis.com/shreesha/projects/port.png",
     link: "https://www.cvshreesha.in/",
   },
   {
@@ -420,7 +426,7 @@ const projects = [
     tag: "Product Engineering",
     year: "2025",
     desc: "SaaS experiments exploring workflow systems and automation.",
-    image: "/projects/POS.jpg",
+    image: "https://storage.googleapis.com/shreesha/projects/POS.jpg",
     link: "https://elysium-pos.vercel.app/",
   },
   {
@@ -429,7 +435,7 @@ const projects = [
     tag: "Full Stack System",
     year: "2025",
     desc: "Architecting intelligent POS ecosystem with scalable backend.",
-    image: "/projects/elysium.png",
+    image: "https://storage.googleapis.com/shreesha/projects/elysium.png",
     link: "https://the-elysium-project.in",
   },
 ];
@@ -682,11 +688,14 @@ function ResumeSection() {
             whileHover={{ rotateX: 2, rotateY: -2, scale: 1.01 }}
             transition={{ type: "spring", stiffness: 160, damping: 22 }}
           >
-            <iframe src="/resume/Shreesha_Resume.pdf" title="Resume" />
+            <iframe
+              src="https://storage.googleapis.com/shreesha/resume/Shreesha_Resume.pdf"
+              title="Resume"
+            />
           </motion.div>
 
           <motion.a
-            href="/resume/Shreesha_Resume.pdf"
+            href="https://storage.googleapis.com/shreesha/resume/Shreesha_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="resume-download"
