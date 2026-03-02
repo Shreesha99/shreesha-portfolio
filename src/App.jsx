@@ -14,9 +14,10 @@ import {
   SiAngular,
   SiDotnet,
   SiMysql,
+  SiHackerrank,
 } from "react-icons/si";
 import gsap from "gsap";
-import { DownloadCloudIcon } from "lucide-react";
+import { DownloadCloudIcon, Github, Instagram, Linkedin } from "lucide-react";
 
 /* ─── SVG Distortion Filter ─── */
 function DistortFilter() {
@@ -855,7 +856,7 @@ function About() {
               transition={{ type: "spring", stiffness: 220, damping: 18 }}
             >
               <Counter
-                number={3}
+                number={3.5}
                 suffix="+"
                 label="Years Experience"
                 trigger={inView}
@@ -868,7 +869,7 @@ function About() {
               transition={{ type: "spring", stiffness: 220, damping: 18 }}
             >
               <Counter
-                number={40}
+                number={30}
                 suffix="+"
                 label="Projects Built"
                 trigger={inView}
@@ -964,12 +965,17 @@ function Contact() {
           <br />
           unforgettable.
         </h2>
-        <a
-          href="mailto:shreeshavenkatram99@gmail.com"
-          className="contact-email"
-        >
-          shreeshavenkatram99@gmail.com
-        </a>
+        <div className="contact-details">
+          <a
+            href="mailto:shreeshavenkatram99@gmail.com"
+            className="contact-email"
+          >
+            shreeshavenkatram99@gmail.com
+          </a>
+          <a href="tel:+919606239247" className="contact-email">
+            +91 9606 239 247
+          </a>
+        </div>
       </motion.div>
 
       <div className="footer-bar">
@@ -980,7 +986,7 @@ function Contact() {
             rel="noopener noreferrer"
             className="footer-social"
           >
-            GITHUB
+            <Github size={30} />
           </a>
 
           <a
@@ -989,23 +995,24 @@ function Contact() {
             rel="noopener noreferrer"
             className="footer-social"
           >
-            LINKEDIN
+            <Linkedin size={30} />
           </a>
 
           <a
-            href="https://www.cvshreesha.in/"
+            href="https://www.hackerrank.com/profile/shreeshavenkatr1"
+            className="footer-social"
             target="_blank"
             rel="noopener noreferrer"
-            className="footer-social"
           >
-            PORTFOLIO
+            <SiHackerrank size={30} />
           </a>
-
           <a
-            href="mailto:shreeshavenkatram99@gmail.com"
+            href="https://www.instagram.com/shreesha_venkatram/"
             className="footer-social"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            EMAIL
+            <Instagram size={30} />
           </a>
         </div>
         <div className="footer-name-wrap">

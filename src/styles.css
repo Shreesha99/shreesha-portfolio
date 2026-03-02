@@ -1068,3 +1068,9 @@ button {
     gap: 32px;
   }
 }
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
