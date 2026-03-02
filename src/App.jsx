@@ -166,6 +166,30 @@ function WavyName() {
   );
 }
 
+function ScrollHint({ visible }) {
+  return (
+    <motion.div
+      className="scroll-hint"
+      initial={{ opacity: 0, y: 20 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8, delay: 0.8 }}
+    >
+      <span className="scroll-text">Scroll</span>
+
+      <motion.div
+        className="scroll-arrow"
+        animate={{ y: [0, 6, 0] }}
+        style={{ rotate: 45 }}
+        transition={{
+          duration: 1.4,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      />
+    </motion.div>
+  );
+}
+
 /* ─── Custom Cursor ─── */
 function Cursor() {
   const mouseX = useMotionValue(-100);
@@ -340,6 +364,7 @@ function Hero({ visible }) {
               <WavyName />
             </motion.div>
           )}
+          <ScrollHint visible={visible} />
         </div>
       </div>
 
