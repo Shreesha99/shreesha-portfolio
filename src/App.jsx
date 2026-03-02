@@ -197,8 +197,28 @@ function WavyName() {
   );
 }
 
+function useHasPointer() {
+  const [hasPointer, setHasPointer] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setHasPointer(mediaQuery.matches);
+
+    const handler = (e) => setHasPointer(e.matches);
+    mediaQuery.addEventListener("change", handler);
+
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
+  return hasPointer;
+}
+
 /* ─── Custom Cursor ─── */
 function Cursor() {
+  const hasPointer = useHasPointer();
+
+  if (!hasPointer) return null;
+
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
@@ -244,9 +264,7 @@ function Cursor() {
       <motion.div
         className="c-dot"
         style={{ x: mouseX, y: mouseY }}
-        animate={{
-          scale: clicked ? 0.6 : 1,
-        }}
+        animate={{ scale: clicked ? 0.6 : 1 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
       />
 
