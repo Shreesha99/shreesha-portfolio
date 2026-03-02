@@ -311,15 +311,15 @@ function Navbar({ visible }) {
 
       <nav className={`nav-links ${open ? "open" : ""}`}>
         <button onClick={() => handleScroll("#about")} className="nav-link">
-          ABOUT
+          About
         </button>
 
         <button onClick={() => handleScroll("#work")} className="nav-link">
-          WORK
+          Work
         </button>
 
         <button onClick={() => handleScroll("#contact")} className="nav-link">
-          CONTACT
+          Contact
         </button>
       </nav>
 
@@ -415,6 +415,7 @@ const projects = [
     desc: "Built high fidelity recreations of modern platforms to master UI systems and scalable component systems.",
     image: "https://storage.googleapis.com/shreesha/projects/clone.png",
     link: "https://github.com/Shreesha99",
+    alt: "Screenshot of clone applications project showcasing various UI components and layouts inspired by popular platforms.",
   },
   {
     num: "02",
@@ -424,6 +425,7 @@ const projects = [
     desc: "Interactive portfolio built with advanced motion and UI micro interactions.",
     image: "https://storage.googleapis.com/shreesha/projects/port.png",
     link: "https://www.cvshreesha.in/",
+    alt: "Screenshot of personal portfolio project showcasing a clean, modern design with interactive elements and smooth animations.",
   },
   {
     num: "03",
@@ -433,6 +435,7 @@ const projects = [
     desc: "SaaS experiments exploring workflow systems and automation.",
     image: "https://storage.googleapis.com/shreesha/projects/POS.jpg",
     link: "https://elysium-pos.vercel.app/",
+    alt: "Screenshot of SaaS product experiment showcasing a sleek dashboard interface with various workflow automation features and data visualizations.",
   },
   {
     num: "04",
@@ -442,6 +445,7 @@ const projects = [
     desc: "Architecting intelligent POS ecosystem with scalable backend.",
     image: "https://storage.googleapis.com/shreesha/projects/elysium.png",
     link: "https://the-elysium-project.in",
+    alt: "Screenshot of The Elysium Project showcasing an intelligent POS ecosystem with a user-friendly interface, real-time analytics, and seamless integration of various business operations.",
   },
 ];
 
@@ -453,13 +457,13 @@ function Keyboard3D() {
   ];
 
   const techMap = {
-    R: <SiReact color="#61DAFB" />,
-    T: <SiTypescript color="#3178C6" />,
-    A: <SiAngular color="#DD0031" />,
-    S: <SiMysql color="#4479A1" />,
-    D: <SiDotnet color="#512BD4" />,
-    N: <SiNextdotjs color="#0070F3" />,
-    J: <SiJira color="#0052CC" />,
+    R: <SiReact color="#61DAFB" aria-hidden="true" />,
+    T: <SiTypescript color="#3178C6" aria-hidden="true" />,
+    A: <SiAngular color="#DD0031" aria-hidden="true" />,
+    S: <SiMysql color="#4479A1" aria-hidden="true" />,
+    D: <SiDotnet color="#512BD4" aria-hidden="true" />,
+    N: <SiNextdotjs color="#0070F3" aria-hidden="true" />,
+    J: <SiJira color="#0052CC" aria-hidden="true" />,
   };
   return (
     <div className="keyboard-wrapper">
@@ -633,7 +637,7 @@ function FloatingPreview({ image, x, y, visible }) {
       }}
       transition={{ duration: 0.25 }}
     >
-      <img src={image} alt="" />
+      <img src={image} alt="Floating preview image for selected work section" />
     </motion.div>
   );
 }
@@ -741,7 +745,7 @@ function Works() {
   return (
     <section className="works-section" id="work">
       <div className="section-header">
-        <span className="section-label">SELECTED WORK</span>
+        <span className="section-label">Selected Work</span>
       </div>
 
       <div className="works-list">
@@ -991,8 +995,9 @@ function Contact() {
             target="_blank"
             rel="noopener noreferrer"
             className="footer-social"
+            aria-label="Shreesha Venkatram GitHub Profile"
           >
-            <Github size={30} />
+            <Github size={30} aria-hidden="true" />
           </a>
 
           <a
@@ -1000,8 +1005,9 @@ function Contact() {
             target="_blank"
             rel="noopener noreferrer"
             className="footer-social"
+            aria-label="Shreesha Venkatram LinkedIn Profile"
           >
-            <Linkedin size={30} />
+            <Linkedin size={30} aria-hidden="true" />
           </a>
 
           <a
@@ -1009,16 +1015,18 @@ function Contact() {
             className="footer-social"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Shreesha Venkatram HackerRank Profile"
           >
-            <SiHackerrank size={30} />
+            <SiHackerrank size={30} aria-hidden="true" />
           </a>
           <a
             href="https://www.instagram.com/shreesha_venkatram/"
             className="footer-social"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Shreesha Venkatram Instagram Profile"
           >
-            <Instagram size={30} />
+            <Instagram size={30} aria-hidden="true" />
           </a>
         </div>
         <div className="footer-name-wrap">
@@ -1061,14 +1069,14 @@ export default function App() {
 
       {!loaded && <NamePreloader onDone={() => setLoaded(true)} />}
 
-      <div className="page">
+      <main className="page">
         <Navbar visible={loaded} />
         <Hero visible={loaded} />
         <About />
         <ResumeSection />
         <Works />
         <Contact />
-      </div>
+      </main>
     </>
   );
 }
