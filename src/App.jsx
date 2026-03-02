@@ -651,10 +651,11 @@ function ResumeSection() {
   const innerRef = useRef(null);
   const [inView, setInView] = useState(false);
   const [pageWidth, setPageWidth] = useState(800);
+  const [numPages, setNumPages] = useState(null);
 
   useEffect(() => {
     const updateWidth = () => {
-      setPageWidth(Math.min(window.innerWidth * 0.8, 900));
+      setPageWidth(Math.min(window.innerWidth * 0.75, 850));
     };
     updateWidth();
     window.addEventListener("resize", updateWidth);
@@ -710,19 +711,24 @@ function ResumeSection() {
 
           <motion.div
             className="resume-preview"
+            data-lenis-prevent
             whileHover={{ rotateX: 2, rotateY: -2, scale: 1.01 }}
             transition={{ type: "spring", stiffness: 160, damping: 22 }}
           >
             <Document
               file="/resume/Shreesha_Resume.pdf"
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               loading={<div style={{ padding: 40 }}>Loading resume...</div>}
             >
-              <Page
-                pageNumber={1}
-                width={pageWidth}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
+              {Array.from(new Array(numPages), (_, index) => (
+                <Page
+                  key={index}
+                  pageNumber={index + 1}
+                  width={pageWidth}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
+              ))}
             </Document>
           </motion.div>
 
