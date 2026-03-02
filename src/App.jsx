@@ -186,38 +186,14 @@ function WavyName() {
 
   return (
     <div className="hero-name">
-      <div className="hero-name-row">
-        <div className="hero-word">{renderWord("shreesha")}</div>
+      <div className="hero-name-row hero-row-wrapper">
+        <div className="hero-word hero-first">{renderWord("shreesha")}</div>
 
         <FlipCircle />
 
-        <div className="hero-word">{renderWord("venkatram")}</div>
+        <div className="hero-word hero-last">{renderWord("venkatram")}</div>
       </div>
     </div>
-  );
-}
-
-function ScrollHint({ visible }) {
-  return (
-    <motion.div
-      className="scroll-hint"
-      initial={{ opacity: 0, y: 20 }}
-      animate={visible ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: 0.8 }}
-    >
-      <span className="scroll-text">Scroll</span>
-
-      <motion.div
-        className="scroll-arrow"
-        animate={{ y: [0, 6, 0] }}
-        style={{ rotate: 45 }}
-        transition={{
-          duration: 1.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-    </motion.div>
   );
 }
 
@@ -395,8 +371,6 @@ function Hero({ visible }) {
               <WavyName />
             </motion.div>
           )}
-
-          <ScrollHint visible={visible} />
         </div>
       </div>
 
@@ -917,7 +891,7 @@ function About() {
 
         <div ref={contentRef} className="about-right">
           <motion.p whileHover={{ x: 4 }}>
-            I’m <strong>Shreesha</strong>, a{" "}
+            I’m <strong className="about-highlight">Shreesha</strong>, a{" "}
             <strong>Full Stack Engineer</strong> focused on building robust,
             high performance systems that operate at scale. At{" "}
             <strong>Siemens Gamesa Renewable Energy</strong>, I work on
@@ -1000,7 +974,7 @@ function Contact() {
         <h2 className="contact-heading">
           Let's make something
           <br />
-          unforgettable.
+          <p className="about-highlight">unforgettable.</p>
         </h2>
         <div className="contact-details">
           <a
@@ -1058,7 +1032,6 @@ function Contact() {
         </div>
         <div className="footer-name-wrap">
           <AnimatedLogo />
-          {/* <span className="footer-name">shreesha</span> */}
         </div>
       </div>
     </section>
