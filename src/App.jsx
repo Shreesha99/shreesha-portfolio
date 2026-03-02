@@ -15,6 +15,8 @@ import {
   SiDotnet,
   SiMysql,
   SiHackerrank,
+  SiNextdotjs,
+  SiJira,
 } from "react-icons/si";
 import gsap from "gsap";
 import { DownloadCloudIcon, Github, Instagram, Linkedin } from "lucide-react";
@@ -395,7 +397,9 @@ function Hero({ visible }) {
       </div>
 
       <div className="hero-bottom keyboard-stage">
-        <Keyboard3D />
+        <div className="keyboard-visual">
+          <Keyboard3D />
+        </div>
       </div>
     </motion.section>
   );
@@ -454,6 +458,8 @@ function Keyboard3D() {
     A: <SiAngular color="#DD0031" />,
     S: <SiMysql color="#4479A1" />,
     D: <SiDotnet color="#512BD4" />,
+    N: <SiNextdotjs color="#0070F3" />,
+    J: <SiJira color="#0052CC" />,
   };
   return (
     <div className="keyboard-wrapper">
