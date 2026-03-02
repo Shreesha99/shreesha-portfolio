@@ -259,27 +259,82 @@ button {
   color: var(--black);
 }
 
-/* ── The Massive Name ── */
+.flip-circle-wrapper {
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.flip-circle {
+  width: clamp(60px, 7vw, 110px);
+  height: clamp(60px, 7vw, 110px);
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: 50%;
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-face img {
+  position: absolute;
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  object-position: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+.flip-back img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .hero-name-container {
-  overflow: visible;
   margin-top: -10px;
-  line-height: 0.85;
-  transform: translateZ(0);
+  line-height: 0.9;
+  padding: 0 16px;
 }
 
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(48px, 12vw, 200px);
   font-weight: 800;
-  line-height: 0.9;
   letter-spacing: -0.04em;
-  color: var(--black);
-  white-space: wrap;
-  padding: 0 16px;
-  display: block;
-  user-select: none;
-  will-change: transform;
-  transform: translateZ(0);
+  font-size: clamp(56px, 10vw, 180px);
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(12px, 2vw, 48px);
+}
+
+.hero-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(12px, 2vw, 48px);
+}
+
+.hero-word {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* ── Black Lower Half ── */
@@ -891,6 +946,23 @@ button {
 
   .name-block {
     justify-content: center;
+  }
+
+  .flip-circle-wrapper {
+    perspective: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .hero-name-row {
+    flex-direction: column;
+  }
+
+  .flip-circle {
+    width: 70px;
+    height: 70px;
   }
 }
 

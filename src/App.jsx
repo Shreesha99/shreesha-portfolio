@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Lenis from "@studio-freight/lenis";
-import { motion, useMotionValue, useSpring, animate } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import "./styles.css";
 import {
   SiReact,
@@ -40,46 +46,51 @@ function DistortFilter() {
   );
 }
 
-/* ─── Preloader ─── */
-function Preloader({ onDone }) {
-  const [count, setCount] = useState(0);
-  const [phase, setPhase] = useState("count"); // count | flash | done
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
-    // Count from 0 to 100 quickly, then flash
-    const controls = animate(0, 100, {
-      duration: 1.6,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (v) => setCount(Math.round(v)),
-      onComplete: () => {
-        setPhase("flash");
-        setTimeout(() => {
-          setPhase("done");
-          setTimeout(onDone, 400);
-        }, 350);
-      },
-    });
-    return () => controls.stop();
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (phase === "done") return null;
+  return isMobile;
+}
+
+function FlipCircle() {
+  const [flipped, setFlipped] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlipped((prev) => !prev);
+    }, 2000); // time between flips
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <motion.div
-      className="preloader"
-      animate={phase === "flash" ? { backgroundColor: "#000" } : {}}
-      transition={{ duration: 0.3 }}
-    >
-      <motion.span
-        className="preloader-count"
-        animate={
-          phase === "flash" ? { color: "#fff", scale: 1.3, opacity: 0 } : {}
-        }
-        transition={{ duration: 0.3 }}
+    <div className="flip-circle-wrapper">
+      <motion.div
+        className="flip-circle"
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{
+          duration: 0.6,
+          ease: [0.83, 0, 0.17, 1],
+        }}
       >
-        {count}
-      </motion.span>
-    </motion.div>
+        <div className="flip-face flip-front">
+          <img src="/photo.png" alt="front" />
+        </div>
+
+        <div className="flip-face flip-back">
+          <img src="/avatar.png" alt="back" />
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -92,7 +103,7 @@ function WavyName() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setInteractive(true);
-    }, 1400); // after drop animation finishes
+    }, 1400);
 
     return () => clearTimeout(timer);
   }, []);
@@ -148,20 +159,27 @@ function WavyName() {
     animFrameRef.current = requestAnimationFrame(fadeOut);
   };
 
-  const letters = "shreesha venkatram".split("");
+  const renderWord = (word) =>
+    word.split("").map((letter, i) => (
+      <span
+        key={i}
+        className="hero-letter"
+        onMouseEnter={(e) => interactive && startWave(e.currentTarget)}
+        onMouseLeave={(e) => interactive && stopWave(e.currentTarget)}
+      >
+        {letter}
+      </span>
+    ));
 
   return (
     <div className="hero-name">
-      {letters.map((letter, i) => (
-        <span
-          key={i}
-          className="hero-letter"
-          onMouseEnter={(e) => interactive && startWave(e.currentTarget)}
-          onMouseLeave={(e) => interactive && stopWave(e.currentTarget)}
-        >
-          {letter}
-        </span>
-      ))}
+      <div className="hero-name-row">
+        <div className="hero-word">{renderWord("shreesha")}</div>
+
+        <FlipCircle />
+
+        <div className="hero-word">{renderWord("venkatram")}</div>
+      </div>
     </div>
   );
 }
@@ -364,6 +382,7 @@ function Hero({ visible }) {
               <WavyName />
             </motion.div>
           )}
+
           <ScrollHint visible={visible} />
         </div>
       </div>
@@ -512,28 +531,27 @@ function NamePreloader({ onDone }) {
 }
 
 function Key({ letter, icon }) {
+  const isMobile = useIsMobile();
   const [hovered, setHovered] = useState(false);
+
+  const active = isMobile ? true : hovered;
 
   return (
     <motion.div
       className="key"
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      whileHover={{
-        y: -12,
-        rotateX: 22,
-        rotateY: 8,
-      }}
-      whileTap={{
-        y: 2,
-        rotateX: 12,
-      }}
+      animate={
+        active
+          ? { y: -12, rotateX: 22, rotateY: 8 }
+          : { y: 0, rotateX: 0, rotateY: 0 }
+      }
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
     >
       <div className="key-cap">
         <motion.span
           className="key-letter"
-          animate={{ opacity: hovered && icon ? 0 : 1 }}
+          animate={{ opacity: active && icon ? 0 : 1 }}
           transition={{ duration: 0.2 }}
         >
           {letter}
@@ -543,8 +561,8 @@ function Key({ letter, icon }) {
           <motion.div
             className="key-icon"
             animate={{
-              opacity: hovered ? 1 : 0,
-              scale: hovered ? 1 : 0.7,
+              opacity: active ? 1 : 0,
+              scale: active ? 1 : 0.7,
             }}
             transition={{ duration: 0.25 }}
           >
@@ -608,28 +626,84 @@ function FloatingPreview({ image, x, y, visible }) {
 }
 
 function ResumeSection() {
+  const ref = useRef(null);
+  const innerRef = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) setInView(true);
+      },
+      { threshold: 0.3 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+
+    gsap.fromTo(
+      innerRef.current.children,
+      { y: 30, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.12,
+        duration: 1,
+        ease: "power3.out",
+      }
+    );
+  }, [inView]);
+
   return (
     <section className="resume-section" id="resume">
-      <div className="resume-inner">
-        <span className="section-label">RESUME</span>
+      <motion.div
+        ref={ref}
+        className="resume-inner"
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div ref={innerRef}>
+          <span className="section-label">RESUME</span>
 
-        <h2 className="resume-heading">
-          Professional Experience & Technical Background
-        </h2>
+          <motion.h2
+            className="resume-heading"
+            whileHover={{ y: -2 }}
+            transition={{ type: "spring", stiffness: 180, damping: 20 }}
+          >
+            Professional Experience & Technical Background
+          </motion.h2>
 
-        <div className="resume-preview">
-          <iframe src="/resume/Shreesha_Resume.pdf" title="Resume" />
+          <motion.div
+            className="resume-preview"
+            whileHover={{ rotateX: 2, rotateY: -2, scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 160, damping: 22 }}
+          >
+            <iframe src="/resume/Shreesha_Resume.pdf" title="Resume" />
+          </motion.div>
+
+          <motion.a
+            href="/resume/Shreesha_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="resume-download"
+            whileHover={{
+              y: -6,
+              scale: 1.05,
+              backgroundColor: "#8ab4ff",
+              color: "#000",
+            }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 260, damping: 18 }}
+          >
+            <DownloadCloudIcon size={20} />
+            Download Resume
+          </motion.a>
         </div>
-
-        <a
-          href="/resume/Shreesha_Resume.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="resume-download"
-        >
-          <DownloadCloudIcon size={20} /> Download Resume
-        </a>
-      </div>
+      </motion.div>
     </section>
   );
 }
@@ -715,7 +789,15 @@ function Counter({ number, suffix, label, trigger }) {
 
 function About() {
   const ref = useRef(null);
+  const contentRef = useRef(null);
   const [inView, setInView] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -728,82 +810,113 @@ function About() {
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!inView) return;
+
+    gsap.fromTo(
+      contentRef.current.querySelectorAll("p"),
+      { y: 24, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.18,
+        duration: 1,
+        ease: "power3.out",
+      }
+    );
+  }, [inView]);
+
   return (
     <section className="about-section" id="about">
       <motion.div
         ref={ref}
         className="about-inner"
-        initial={{ opacity: 0, y: 40 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
+        style={{ y }}
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="about-left">
           <span className="section-label">ABOUT</span>
 
           <div className="about-stats">
-            <Counter
-              number={3}
-              suffix="+"
-              label="Years Experience"
-              trigger={inView}
-            />
-            <Counter
-              number={40}
-              suffix="+"
-              label="Projects Built"
-              trigger={inView}
-            />
-            {/* <Counter
-              number={12}
-              suffix="+"
-              label="Clients / Teams"
-              trigger={inView}
-            /> */}
+            <motion.div
+              className="stat"
+              whileHover={{ y: -6, scale: 1.05, color: "#6cf2c2" }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+            >
+              <Counter
+                number={3}
+                suffix="+"
+                label="Years Experience"
+                trigger={inView}
+              />
+            </motion.div>
+
+            <motion.div
+              className="stat"
+              whileHover={{ y: -6, scale: 1.05, color: "#8ab4ff" }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+            >
+              <Counter
+                number={40}
+                suffix="+"
+                label="Projects Built"
+                trigger={inView}
+              />
+            </motion.div>
           </div>
         </div>
 
-        <div className="about-right">
-          <p>
+        <div ref={contentRef} className="about-right">
+          <motion.p whileHover={{ x: 4 }}>
             I’m <strong>Shreesha</strong>, a{" "}
             <strong>Full Stack Engineer</strong> focused on building robust,
             high performance systems that operate at scale. At{" "}
             <strong>Siemens Gamesa Renewable Energy</strong>, I work on
             enterprise applications that support real world renewable energy
             operations, contributing across both frontend and backend layers.
-          </p>
+          </motion.p>
 
-          <p>
+          <motion.p whileHover={{ x: 4 }}>
             Over the past three years, I’ve architected and integrated{" "}
             <strong>REST APIs</strong>, streamlined complex production
             codebases, and enhanced application performance across large scale
-            systems. I enjoy transforming heavy, intricate logic into
-            structured, efficient, and scalable solutions.
-          </p>
+            systems.
+          </motion.p>
 
-          <p>
+          <motion.p whileHover={{ x: 4 }}>
             Working within <strong>Agile teams</strong>, I collaborate closely
             with stakeholders and engineers to translate business requirements
-            into intuitive interfaces and dependable backend services. My
-            approach goes beyond shipping features, I aim to design systems that
-            are{" "}
+            into intuitive interfaces and dependable backend services. I aim to
+            design systems that are{" "}
             <strong>
               maintainable, scalable, and built for long term impact
             </strong>
             .
-          </p>
+          </motion.p>
 
           <div className="skills-row">
             {[
-              { name: "Angular", icon: <SiAngular /> },
-              { name: ".NET & C#", icon: <SiDotnet /> },
-              { name: "SQL", icon: <SiMysql /> },
-              { name: "React", icon: <SiReact /> },
-              { name: "TypeScript", icon: <SiTypescript /> },
+              { name: "Angular", icon: <SiAngular />, color: "#dd0031" },
+              { name: ".NET & C#", icon: <SiDotnet />, color: "#512bd4" },
+              { name: "SQL", icon: <SiMysql />, color: "#4479a1" },
+              { name: "React", icon: <SiReact />, color: "#61dafb" },
+              { name: "TypeScript", icon: <SiTypescript />, color: "#3178c6" },
             ].map((skill) => (
-              <span key={skill.name} className="skill-tag">
+              <motion.span
+                key={skill.name}
+                className="skill-tag"
+                whileHover={{
+                  y: -6,
+                  backgroundColor: skill.color,
+                  color: "#000",
+                }}
+                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              >
                 <span className="skill-icon">{skill.icon}</span>
                 {skill.name}
-              </span>
+              </motion.span>
             ))}
           </div>
         </div>
