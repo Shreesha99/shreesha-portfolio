@@ -20,6 +20,10 @@ import {
 } from "react-icons/si";
 import gsap from "gsap";
 import { DownloadCloudIcon, Github, Instagram, Linkedin } from "lucide-react";
+import { Document, Page, pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc =
+  process.env.PUBLIC_URL + "/pdf.worker.min.mjs";
 
 /* ─── SVG Distortion Filter ─── */
 function DistortFilter() {
@@ -646,6 +650,16 @@ function ResumeSection() {
   const ref = useRef(null);
   const innerRef = useRef(null);
   const [inView, setInView] = useState(false);
+  const [pageWidth, setPageWidth] = useState(800);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      setPageWidth(Math.min(window.innerWidth * 0.8, 900));
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -699,10 +713,17 @@ function ResumeSection() {
             whileHover={{ rotateX: 2, rotateY: -2, scale: 1.01 }}
             transition={{ type: "spring", stiffness: 160, damping: 22 }}
           >
-            <iframe
-              src="https://storage.googleapis.com/shreesha/resume/Shreesha_Resume.pdf"
-              title="Resume"
-            />
+            <Document
+              file="/resume/Shreesha_Resume.pdf"
+              loading={<div style={{ padding: 40 }}>Loading resume...</div>}
+            >
+              <Page
+                pageNumber={1}
+                width={pageWidth}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            </Document>
           </motion.div>
 
           <motion.a
