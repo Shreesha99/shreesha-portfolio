@@ -448,11 +448,13 @@ button {
 
 /* ── About ── */
 .about-section {
+  position: relative;
   background: var(--off-white);
   padding: 100px 28px;
 }
 
 .about-inner {
+  position: relative;
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 80px;

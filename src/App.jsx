@@ -217,8 +217,6 @@ function useHasPointer() {
 function Cursor() {
   const hasPointer = useHasPointer();
 
-  if (!hasPointer) return null;
-
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
@@ -229,6 +227,8 @@ function Cursor() {
   const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
+    if (!hasPointer) return;
+
     const move = (e) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
@@ -257,7 +257,9 @@ function Cursor() {
       window.removeEventListener("mouseup", up);
       window.removeEventListener("mouseover", handleHover);
     };
-  }, []);
+  }, [hasPointer, mouseX, mouseY]);
+
+  if (!hasPointer) return null;
 
   return (
     <>
